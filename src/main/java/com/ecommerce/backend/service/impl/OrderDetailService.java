@@ -24,6 +24,8 @@ public class OrderDetailService {
     @Autowired
     private UserDao userDao;
 
+//    here we need to use the orderInput to fetch the data and by using the main entity table OrderDetail we will save the data into the database
+//    Here the orderInput is only like a helper to take the data and save it
     public void placeOrder(OrderInput orderInput) {
         List<OrderProductQuantity> productQuantityList = orderInput.getOrderProductQuantityList();
         for (OrderProductQuantity o : productQuantityList) {
