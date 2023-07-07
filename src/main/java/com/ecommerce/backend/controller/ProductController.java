@@ -52,19 +52,19 @@ public class ProductController {
     }
 
     @GetMapping("/getAllProducts")
-    public List<Product> getAllProducts(@RequestParam(defaultValue = "0") int pageNumber) {
-       return this.productService.getAllProducts(pageNumber);
+    public List<Product> getAllProducts(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "") String searchKey) {
+        return this.productService.getAllProducts(pageNumber, searchKey);
     }
 
     @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/deleteProduct/{productId}")
-    public void deleteProduct(@PathVariable Integer productId){
+    public void deleteProduct(@PathVariable Integer productId) {
         this.productService.deleteProduct(productId);
     }
 
 
     @GetMapping("/getProductDetailsById/{productId}")
-    public Product getProductDetailsById(@PathVariable Integer productId){
+    public Product getProductDetailsById(@PathVariable Integer productId) {
         return this.productService.getProductDetailsById(productId);
     }
 
@@ -72,6 +72,6 @@ public class ProductController {
     @GetMapping("/getProductDetails/{isSingleProductCheckout}/{productId}")
     public List<Product> getProductDetails(@PathVariable(name = "isSingleProductCheckout") boolean isSingleProductCheckout,
                                            @PathVariable(name = "productId") Integer productId) {
-       return  productService.getProductDetails(isSingleProductCheckout,productId);
+        return productService.getProductDetails(isSingleProductCheckout, productId);
     }
 }

@@ -16,17 +16,21 @@ public class ProductServiceImpl {
     @Autowired
     private ProductDao productDao;
 
-    public Product addNewProduct(Product product){
+    public Product addNewProduct(Product product) {
         return this.productDao.save(product);
     }
 
-    public List<Product> getAllProducts(int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber,8);
-        return (List<Product>) this.productDao.findAll(pageable);
+    public List<Product> getAllProducts(int pageNumber, String searchKey) {
+        Pageable pageable = PageRequest.of(pageNumber, 8);
+        if (searchKey.equals("")) {
+            return (List<Product>) this.productDao.findAll(pageable);
+        } else {
+            return (List<Product>) this.productDao.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(searchKey, searchKey, pageable);
+        }
     }
 
     public void deleteProduct(Integer productId) {
-       this.productDao.deleteById(productId);
+        this.productDao.deleteById(productId);
     }
 
     public Product getProductDetailsById(Integer productId) {
