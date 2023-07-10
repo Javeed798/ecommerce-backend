@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@CrossOrigin("* ")
+@CrossOrigin("*")
 public class CartController {
 
 
@@ -18,6 +20,12 @@ public class CartController {
     @GetMapping ("/addToCart/{productId}")
     public Cart addToCart(@PathVariable(name = "productId") Integer productId){
         return cartService.addToCart(productId);
+    }
+
+    @PreAuthorize("hasRole('User')")
+    @GetMapping("/getCartDetails")
+    public List<Cart> getCartDetails(){
+        return cartService.getCartDetails();
     }
 
 

@@ -1,7 +1,12 @@
 package com.ecommerce.backend.service.impl;
 
+import com.ecommerce.backend.configuration.JwtRequestFilter;
+import com.ecommerce.backend.dao.CartDao;
 import com.ecommerce.backend.dao.ProductDao;
+import com.ecommerce.backend.dao.UserDao;
+import com.ecommerce.backend.entity.Cart;
 import com.ecommerce.backend.entity.Product;
+import com.ecommerce.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,12 +14,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private CartDao cartDao;
 
     public Product addNewProduct(Product product) {
         return this.productDao.save(product);
@@ -38,7 +50,7 @@ public class ProductServiceImpl {
     }
 
     public List<Product> getProductDetails(boolean isSingleProductCheckout, Integer productId) {
-        if (isSingleProductCheckout) {
+        if (isSingleProductCheckout && productId != 0) {
 //            buy single product
             List<Product> list = new ArrayList<>();
             Product product = productDao.findById(productId).get();
@@ -46,7 +58,11 @@ public class ProductServiceImpl {
             return list;
         } else {
 //            we are going to checkout entire cart
+            String username = JwtRequestFilter.CURRENT_USER;
+            User user = userDao.findById(username).get();
+            List<Cart> carts = cartDao.findByUser(user);
+            List<Product> products = carts.stream().map(x -> x.getProduct()).collect(Collectors.toList());
+            return products;
         }
-        return new ArrayList<>();
     }
 }
