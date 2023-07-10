@@ -58,4 +58,9 @@ public class CartServiceImpl {
     }
 
 
+    public void deleteCartItem(Integer cartId) {
+//        Cart cart = cartDao.findById(cartId).get();
+//        cartDao.delete(cart);
+        cartDao.deleteById(cartId);
+    }
 }
