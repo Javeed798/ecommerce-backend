@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl {
@@ -33,6 +34,14 @@ public class CartServiceImpl {
              user = userDao.findById(username).get();
         }
 
+//        not to add duplicate items in the cart
+        List<Cart> cartList = cartDao.findByUser(user);
+        List<Cart> filteredLists = cartList.stream().filter(x -> x.getProduct().getProductId() == productId).collect(Collectors.toList());
+        if (filteredLists.size() > 0) {
+            return null;
+        }
+
+//        saving the product to the cart
         if(product != null && user != null){
             Cart cart = new Cart(
                     product,user

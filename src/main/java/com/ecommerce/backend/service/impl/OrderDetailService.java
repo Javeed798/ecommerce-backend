@@ -1,6 +1,7 @@
 package com.ecommerce.backend.service.impl;
 
 import com.ecommerce.backend.configuration.JwtRequestFilter;
+import com.ecommerce.backend.dao.CartDao;
 import com.ecommerce.backend.dao.OrderDetailDao;
 import com.ecommerce.backend.dao.ProductDao;
 import com.ecommerce.backend.dao.UserDao;
@@ -24,9 +25,12 @@ public class OrderDetailService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private CartDao cartDao;
+
 //    here we need to use the orderInput to fetch the data and by using the main entity table OrderDetail we will save the data into the database
 //    Here the orderInput is only like a helper to take the data and save it
-    public void placeOrder(OrderInput orderInput) {
+    public void placeOrder(OrderInput orderInput, boolean isSingleProductCheckout) {
         List<OrderProductQuantity> productQuantityList = orderInput.getOrderProductQuantityList();
         for (OrderProductQuantity o : productQuantityList) {
             Product product = productDao.findById(o.getProductId()).get();
@@ -42,6 +46,12 @@ public class OrderDetailService {
                     product,
                     user
             );
+
+//            empty the cart
+            if (!isSingleProductCheckout) {
+                List<Cart> carts = cartDao.findByUser(user);
+                carts.stream().forEach(x -> cartDao.deleteById(x.getCartId()));
+            }
             orderDetailDao.save(orderDetail);
         }
     }
